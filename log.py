@@ -6,6 +6,7 @@
 
 import time
 import os
+import sys
 from config import debug_status, save_log
 
 
@@ -17,7 +18,7 @@ def save_log_to_file(message: str):
     if not save_log:
         return
     try:
-        with open(os.path.join(os.getcwd(), "log.txt"), "a", encoding="utf-8") as fp:
+        with open(os.path.join(os.getcwd(), "log", "log.txt"), "a", encoding="utf-8") as fp:
             fp.write(message+"\n")
     except Exception as e:
         pass

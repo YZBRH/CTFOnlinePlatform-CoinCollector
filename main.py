@@ -255,15 +255,7 @@ class Bugku:
 
 
 if __name__ == "__main__":
-    flag = True
-    start_time = time.time()
     while True:
-        if not flag:
-            if time.time() - start_time > interval_time:
-                flag = True
-                start_time = time.time()
-            continue
-
         if nss_username != "" and nss_password != "":
             log.info("NSSCTF: 开始签到")
             token = NSSCTF().login(nss_username, nss_password)
@@ -280,4 +272,4 @@ if __name__ == "__main__":
         else:
             log.info("Bugku: 未配置账号密码，跳过")
 
-        flag = False
+        time.sleep(interval_time)

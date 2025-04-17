@@ -13,6 +13,27 @@
 
 ### 食用方法
 
+### Docker部署
+
+​	拉取项目
+
+```
+git clone https://github.com/YZBRH/CTFOnlinePlatform-CoinCollector.git
+```
+
+​	配置config.py文件，输入账号密码等信息
+
+​	然后执行
+
+```
+cd docker
+docker-compose up -d
+```
+
+
+
+#### 本地部署
+
 ​	拉取项目
 
 ```
@@ -28,4 +49,3 @@ git clone https://github.com/YZBRH/CTFOnlinePlatform-CoinCollector.git
 pip install -r requirement.txt
 python main.py
 ```
-
