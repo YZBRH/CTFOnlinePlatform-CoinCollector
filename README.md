@@ -11,6 +11,13 @@
 
 
 
+​	未来或许会支持的在线靶场：
+
+- [CTFHub](https://www.ctfhub.com/)
+- [攻防世界](https://adworld.xctf.org.cn/)
+
+
+
 ## 食用方法
 
 ### Docker部署
