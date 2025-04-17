@@ -19,6 +19,7 @@
 
 ```
 git clone https://github.com/YZBRH/CTFOnlinePlatform-CoinCollector.git
+cd CTFOnlinePlatform-CoinCollector
 ```
 
 ​	配置config.py文件，输入账号密码等信息
@@ -38,6 +39,7 @@ docker-compose up -d
 
 ```
 git clone https://github.com/YZBRH/CTFOnlinePlatform-CoinCollector.git
+cd CTFOnlinePlatform-CoinCollector
 ```
 
 
