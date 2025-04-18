@@ -74,7 +74,7 @@ class NSSCTF:
             log.error("NSSCTF: 未登录，签到失败！")
             return False
 
-        # requests.get(url, headers=headers)
+        requests.get(url, headers=headers)
 
         # 后续状态
         final_res = self.person_information(token)

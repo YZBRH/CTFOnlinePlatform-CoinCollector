@@ -58,3 +58,17 @@ cd CTFOnlinePlatform-CoinCollector
 pip install -r requirement.txt
 python main.py
 ```
+
+
+
+## 更新日志
+
+V1.1
+
+修复NSSCTF签到失败的问题
+
+
+
+V1.0
+
+首次提交
