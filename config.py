@@ -6,11 +6,16 @@
 
 # 基础配置
 # 是否开启Debug模式
-debug_status = False
+debug_status = True
 # 是否保存日志
 save_log = True
 # 签到间隔时间，单位为秒
 interval_time = 60*60*8
+# 登录重试上限
+retry_limit = 20
+# onnxruntime警告忽略
+# 如果出现 onnxruntime相关警告刷屏，请设置为False
+onnxruntime_warning = False
 
 # NSSCTF相关配置
 # https://www.nssctf.cn/
@@ -21,3 +26,13 @@ nss_password = ""
 # https://ctf.bugku.com/
 bugku_username = ""
 bugku_password = ""
+
+# CTFHub相关配置
+# https://www.ctfhub.com/
+ctfhub_username = ""
+ctfhub_password = ""
+
+# 攻防世界相关配置
+# https://adworld.xctf.org.cn/
+adworld_username = ""
+adworld_password = ""

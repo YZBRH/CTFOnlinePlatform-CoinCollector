@@ -8,11 +8,6 @@
 
 - [NSSCTF](https://www.nssctf.cn/)
 - [Bugku](https://ctf.bugku.com/)
-
-
-
-​	未来或许会支持的在线靶场：
-
 - [CTFHub](https://www.ctfhub.com/)
 - [攻防世界](https://adworld.xctf.org.cn/)
 
@@ -63,12 +58,18 @@ python main.py
 
 ## 更新日志
 
+V1.2
+
+​	添加[CTFHub](https://www.ctfhub.com/)，[攻防世界](https://adworld.xctf.org.cn/)
+
+
+
 V1.1
 
-修复NSSCTF签到失败的问题
+​	修复NSSCTF签到失败的问题
 
 
 
 V1.0
 
-首次提交
+​	首次提交
