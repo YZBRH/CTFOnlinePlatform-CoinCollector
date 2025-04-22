@@ -74,6 +74,7 @@ def img_to_code(img: bytes) -> str:
 
 
 class NSSCTF:
+    # NSSCTF平台
     def login(self, username: str, password: str) -> str:
         """
         NSSCTF登录
@@ -128,27 +129,16 @@ class NSSCTF:
             "Cookie": f"token={token}"
         }
 
-        # 开始状态
-        start_res = self.get_person_information(token)
-        if start_res["code"] != 200:
-            log.error("NSSCTF: 未登录，签到失败！")
-            return False
-
         requests.get(url, headers=headers)
 
         # 后续状态
-        final_res = self.get_person_information(token)
-        if final_res["code"] != 200:
+        res = self.get_person_information(token)
+        if res["code"] != 200:
             log.error("NSSCTF: 未登录，签到失败！")
             return False
 
-        # 前后金币余额对比
-        start_coin = start_res["data"]["coin"]
-        final_coin = final_res["data"]["coin"]
-        if final_coin > start_coin:
-            log.info(f"NSSCTF: 签到成功！金币余额: {start_coin}->{final_coin}")
-        else:
-            log.info(f"NSSCTF: 今日已签到，金币余额: {final_coin}")
+        coin = res["data"]["coin"]
+        log.info(f"NSSCTF: 今日已签到，金币余额: {coin}")
 
         return True
 
@@ -181,6 +171,7 @@ class NSSCTF:
 
 
 class Bugku:
+    # Bugku平台
     def login(self, username: str, password: str) -> str:
         """
         Bugku登录
@@ -318,6 +309,7 @@ class Bugku:
 
 
 class CTFHub:
+    # CTFHub平台
     def login(self, username: str, password: str) -> str:
         """
         CTFHub登录
@@ -469,9 +461,16 @@ class CTFHub:
 
 
 class ADWorld:
+    # 攻防世界平台
     user_id = -1
 
     def login(self, username: str, password: str) -> (str, str):
+        """
+        攻防世界登录
+        :param username: 用户名
+        :param password: 密码
+        :return: 用户ID,登录token
+        """
         url = "https://adworld.xctf.org.cn/api/login/"
 
         headers = {
@@ -510,6 +509,10 @@ class ADWorld:
         return "", ""
 
     def get_hash_key(self) -> str:
+        """
+        获取随机验证码图片代码
+        :return: 验证码图片代码
+        """
         url = "https://adworld.xctf.org.cn/api/images/"
 
         headers = {
@@ -531,6 +534,11 @@ class ADWorld:
             return ""
 
     def classification(self, hashkey: str) -> str:
+        """
+        识别验证码
+        :param hashkey: 验证码图片代码
+        :return: 识别出的验证码
+        """
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0"
         }
@@ -551,6 +559,12 @@ class ADWorld:
         return code
 
     def sign_in(self, user_id: str, jwt_token: str) -> bool:
+        """
+        攻防世界签到
+        :param user_id: 用户ID
+        :param jwt_token: 登录Token
+        :return: 是否签到成功
+        """
         url = "https://adworld.xctf.org.cn/api/user_center/daily/checkin/create/"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
@@ -573,6 +587,12 @@ class ADWorld:
                 return False
 
     def get_person_information(self, user_id: str, jwt_token: str) -> dict:
+        """
+        获取个人信息
+        :param user_id: 用户ID
+        :param jwt_token: 登录Token
+        :return: 个人信息
+        """
         url = f"https://adworld.xctf.org.cn/api/user_center/base/info/{user_id}/"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
@@ -590,13 +610,135 @@ class ADWorld:
             return {}
 
 
+class QSNCTF:
+    # 青少年CTF练习平台
+    def login(self, username, password) -> str:
+        """
+        青少年CTF训练平台登录
+        :param username: 用户名
+        :param password: 密码
+        :return: 登录凭证
+        """
+        url = "https://www.qsnctf.com/api/login"
+
+        flag = 0
+        while flag < retry_limit:
+            flag += 1
+
+            post_json = {
+                "username": username,
+                "password": password,
+                "captcha": self.classification(),
+                "code": "02c9ad84-d17d-47e8-8a6f-a1228d2b81f9"
+            }
+
+            try:
+                res = requests.post(url, json=post_json).json()
+            except Exception as err:
+                log.error(f"青少年CTF练习平台: 网络链接出错：{err}")
+                return ""
+
+            access = res.get("access", None)
+            if access is not None:
+                log.info(f"青少年CTF练习平台: 【第{flag}次尝试】登录成功! access: {access}")
+                return access
+            
+            log.error(f"青少年CTF练习平台: 【第{flag}次尝试】登录失败, 原因: {res.get('detail', '未知原因')}")
+
+        log.error(f"青少年CTF练习平台: 登录失败，超过最大重试次数！")
+        return ""
+
+    def classification(self) -> str:
+        """
+        识别验证码
+        :return: 识别出的验证码
+        """
+        code = ""
+        while len(code) < 4:
+            url = "https://www.qsnctf.com/api/captcha/02c9ad84-d17d-47e8-8a6f-a1228d2b81f9"
+
+            try:
+                img = requests.get(url).content
+            except Exception as err:
+                log.error(f"青少年CTF练习平台: 网络链接出错：{err}")
+                return ""
+
+            code = img_to_code(img)
+        return code
+
+    def sign_in(self, access: str) -> bool:
+        """
+        青少年CTF练习平台签到
+        :param access: 登录凭证
+        :return: 是否签到成功
+        """
+        url = "https://www.qsnctf.com/api/api/sign_in"
+
+        headers = {
+            "Authorization": f"Bearer {access}"
+        }
+
+        start_coin = self.get_person_information(access).get("gold_coins", -1)
+
+        try:
+            res = requests.post(url, headers=headers).json()
+        except Exception as err:
+            log.error(f"青少年CTF练习平台: 网络链接出错：{err}")
+            return False
+
+        final_coin = self.get_person_information(access).get("gold_coins", -1)
+
+        msg = res.get("detail")
+
+        if "成功" in msg:
+            log.info(f"青少年CTF练习平台: 签到成功！金币余额: {start_coin}->{final_coin}")
+            return True
+        elif "已经签到" in msg:
+            log.info(f"青少年CTF练习平台: 今日已经签到！当前金币余额: {final_coin}")
+            return True
+        else:
+            log.error(f"青少年CTF练习平台: 签到失败！原因: {msg}")
+            return False
+
+    def get_person_information(self, access: str) -> dict:
+        """
+        获取个人信息
+        :param access: 登录凭证
+        :return: 个人信息
+        """
+        url = "https://www.qsnctf.com/api/profile"
+
+        headers = {
+            "Authorization": f"Bearer {access}"
+        }
+
+        try:
+            res = requests.get(url, headers=headers).json()
+        except Exception as err:
+            log.error(f"青少年CTF练习平台: 网络链接出错：{err}")
+            return {}
+
+        msg = res.get("detail", None)
+        log.debug(f"青少年CTF练习平台: 获取到的个人信息: {res}")
+
+        if msg is not None:
+            log.error(f"青少年CTF练习平台: 获取个人信息失败！原因: {msg}")
+            return {}
+
+        return res
+
+
 # 防止onnxruntime警告刷屏
 if not onnxruntime_warning:
     import onnxruntime
     onnxruntime.set_default_logger_severity(3)
 
 if __name__ == "__main__":
+    try_time = 0
     while True:
+        try_time += 1
+        log.info(f"第{try_time}次签到开始...")
+
         # NSSCTF
         print("-"*20+"\n"+"-"*20)
         if nss_username != "" and nss_password != "":
@@ -637,6 +779,17 @@ if __name__ == "__main__":
         else:
             log.info("攻防世界: 未配置账号密码，跳过")
 
+        # 青少年CTF练习平台
+        print("-"*20+"\n"+"-"*20)
+        if qsnctf_username != "" and qsnctf_password != "":
+            log.info("青少年CTF练习平台: 开始签到")
+            access = QSNCTF().login(qsnctf_username, qsnctf_password)
+            QSNCTF().sign_in(access)
+            log.info("青少年CTF练习平台: 签到操作结束")
+        else:
+            log.info("青少年CTF练习平台: 未配置账号密码，跳过")
+
+        log.info(f"第{try_time}次签到结束，将在{interval_time}秒({interval_time//3600.0}小时)后开始下一轮签到...")
         time.sleep(interval_time)
 
 

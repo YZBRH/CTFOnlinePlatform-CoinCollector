@@ -10,6 +10,7 @@
 - [Bugku](https://ctf.bugku.com/)
 - [CTFHub](https://www.ctfhub.com/)
 - [攻防世界](https://adworld.xctf.org.cn/)
+- [青少年CTF练习平台](https://www.qsnctf.com/)
 
 
 
@@ -57,6 +58,14 @@ python main.py
 
 
 ## 更新日志
+
+V1.3
+
+​	[青少年CTF练习平台](https://www.qsnctf.com/)
+
+​	优化部分代码逻辑
+
+
 
 V1.2
 

@@ -6,7 +6,7 @@
 
 # 基础配置
 # 是否开启Debug模式
-debug_status = True
+debug_status = False
 # 是否保存日志
 save_log = True
 # 签到间隔时间，单位为秒
@@ -36,3 +36,8 @@ ctfhub_password = ""
 # https://adworld.xctf.org.cn/
 adworld_username = ""
 adworld_password = ""
+
+# 青少年CTF练习平台相关配置
+# https://www.qsnctf.com/
+qsnctf_username = ""
+qsnctf_password = ""
