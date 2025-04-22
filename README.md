@@ -61,7 +61,7 @@ python main.py
 
 V1.3
 
-​	[青少年CTF练习平台](https://www.qsnctf.com/)
+​	添加[青少年CTF练习平台](https://www.qsnctf.com/)
 
 ​	优化部分代码逻辑
 
