@@ -9,19 +9,31 @@ import os
 import sys
 from config import debug_status, save_log
 
+LOG_DIR = os.path.join(os.getcwd(), "log")
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = os.path.join(LOG_DIR, "log.txt")
+MAX_SIZE = 10 * 1024 * 1024  # 10MB
 
 def get_now_time():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
+def rotate_log():
+    if os.path.exists(LOG_FILE) and os.path.getsize(LOG_FILE) >= MAX_SIZE:
+        # 重命名 log.txt -> log.txt.bak 或带时间戳
+        import shutil
+        backup_name = LOG_FILE + "." + time.strftime("%Y%m%d_%H%M%S")
+        shutil.move(LOG_FILE, backup_name)
+        # 可选：删除旧备份文件，保留最近 N 个
 
 def save_log_to_file(message: str):
     if not save_log:
         return
     try:
-        with open(os.path.join(os.getcwd(), "log", "log.txt"), "a", encoding="utf-8") as fp:
-            fp.write(message+"\n")
+        rotate_log()  # 每次写入前检查是否需要轮转
+        with open(LOG_FILE, "a", encoding="utf-8") as fp:
+            fp.write(message + "\n")
     except Exception as e:
-        pass
+        print(f"[ERROR] 日志写入失败: {e}")  # 不要静默失败
 
 
 def info(message: str):
@@ -50,4 +62,8 @@ def debug(message: str):
 
 
 if __name__ == "__main__":
-    pass
+    info("这是一条信息")
+    warning("这是一条警告")
+    error("这是一条错误")
+    debug("这是一条调试信息")
+
