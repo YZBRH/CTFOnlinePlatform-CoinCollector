@@ -58,30 +58,6 @@ python main.py
 
 
 ## 更新日志
-V1.4
-
-​	增加日志轮询，防止日志文件过大
-
-
-V1.3
-
-​	添加[青少年CTF练习平台](https://www.qsnctf.com/)
-
-​	优化部分代码逻辑
-
-
-
-V1.2
-
-​	添加[CTFHub](https://www.ctfhub.com/)，[攻防世界](https://adworld.xctf.org.cn/)
-
-
-
-V1.1
-
-​	修复NSSCTF签到失败的问题
-
-
 
 ### V1.0
 
