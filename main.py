@@ -95,7 +95,7 @@ class NSSCTF:
 
         # 登录请求
         try:
-            res = requests.post(url, data=post_data)
+            res = requests.post(url, json=post_data)
             log.debug(f"NSSCTF: 登录完成，响应：{res.text}")
         except Exception as err:
             log.error(f"NSSCTF: 网络链接出错：{err}")
@@ -737,7 +737,7 @@ if __name__ == "__main__":
     try_time = 0
     while True:
         try_time += 1
-        log.info(f"第{try_time}次签到开始...")
+        log.info(f"第{try_time}轮签到开始...")
 
         # NSSCTF
         print("-"*20+"\n"+"-"*20)
@@ -789,7 +789,7 @@ if __name__ == "__main__":
         else:
             log.info("青少年CTF练习平台: 未配置账号密码，跳过")
 
-        log.info(f"第{try_time}次签到结束，将在{interval_time}秒({interval_time//3600.0}小时)后开始下一轮签到...")
+        log.info(f"第{try_time}轮签到结束，将在{interval_time}秒({interval_time//3600.0}小时)后开始下一轮签到...")
         time.sleep(interval_time)
 
 

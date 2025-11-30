@@ -83,6 +83,26 @@ V1.1
 
 
 
-V1.0
+### V1.0
 
-​	首次提交
+### V1.0.1
+
+- fix(NSSCTF): 修复NSSCTF签到失败的问题
+
+### V1.1.0
+
+- feature(Module): 添加[CTFHub](https://www.ctfhub.com/)，[攻防世界](https://adworld.xctf.org.cn/)
+
+### V1.2.0
+
+- feature(Module): 添加[青少年CTF练习平台](https://www.qsnctf.com/)
+
+- perf(main): 优化部分代码逻辑
+
+### V1.2.1
+
+- perf(log): 增加日志轮询，防止日志文件过大
+
+### V1.2.2
+
+- fix(NSSCTF): 更新登录接口以适应平台变化
