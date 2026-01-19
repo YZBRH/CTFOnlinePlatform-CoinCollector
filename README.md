@@ -82,3 +82,7 @@ python main.py
 ### V1.2.2
 
 - fix(NSSCTF): 更新登录接口以适应平台变化
+
+### V1.2.3
+
+- fix(import): 解决了ddddocr库导入失败的问题
