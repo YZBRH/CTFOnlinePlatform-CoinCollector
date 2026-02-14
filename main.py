@@ -4,6 +4,7 @@
 # @File    : main.py
 # @description:
 
+import re
 import requests
 import ddddocr
 from bs4 import BeautifulSoup
@@ -104,7 +105,18 @@ class NSSCTF:
         # 结果处理
         code = res.json()["code"]
         if code == 200:
-            token = res.json()["data"]["token"]
+            set_cookie = res.headers.get("Set-Cookie", "")
+            if not set_cookie:
+                log.error("NSSCTF: 获取cookie失败！")
+                return ""
+
+            match = re.search(r'token=([a-f0-9]+)', set_cookie)
+            token = match.group(1) if match else None
+
+            if not token:
+                log.error("NSSCTF: 获取token失败！")
+                return ""
+
             log.info(f"NSSCTF: 登录成功！Token：{token}")
             return token
         else:
