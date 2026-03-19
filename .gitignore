@@ -1,4 +1,5 @@
 __pycache__
 .idea
-log/log.txt
-test.py
+log/*
+test.*
+config.py
