@@ -437,11 +437,11 @@ class CTFHub:
         res = requests.post(url, headers=headers, json=post_json).json()
 
         if res.get("status", False):
-            log.info("查询个人信息成功")
-            log.debug(f"个人信息: {res.get('data')}")
+            log.info("CTFHub：查询个人信息成功")
+            log.debug(f"CTFHub：个人信息: {res.get('data')}")
             return res.get("data")
         else:
-            log.error(f"查询个人信息失败，原因：{res.get('msg')}")
+            log.error(f"CTFHub：查询个人信息失败，原因：{res.get('msg')}")
             return {}
 
     def sign_in(self, cookie: str) -> bool:
@@ -483,7 +483,7 @@ class ADWorld:
         :param password: 密码
         :return: 用户ID,登录token
         """
-        url = "https://adworld.xctf.org.cn/api/login/"
+        url = "https://adworld.xctf.org.cn/api/ad/auth/web/login/"
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0"
@@ -492,14 +492,12 @@ class ADWorld:
         flag = 0  # 重试次数
         while flag < retry_limit:
             flag += 1
-            hashkey = self.get_hash_key()
-            code = self.classification(hashkey)
+            captcha = "null"
 
             json_data = {
                 "username": username,
-                "password": des_ecb_encrypt(password.encode("utf-8"), b'B13H016Y'),
-                "hash_key": hashkey,
-                "hash_code": code
+                "password": password,
+                "captcha": captcha
             }
 
             try:
@@ -507,118 +505,47 @@ class ADWorld:
             except Exception as err:
                 log.error(f"攻防世界: 网络链接出错：{err}")
                 return "", ""
+            
+            if res.get("code", "") == "AD-000000":
+                ret_data = res.get("data", None)
 
-            if res.get("code") == 0:
-                jwt_token = res.get("data").get("access")
-                user_id = res.get("data").get("id")
+                jwt_token = ret_data.get("token", None)
+                user_id = ret_data.get("user",{}).get("id", None)
                 log.info(f"攻防世界: 【第{flag}次尝试】登录成功, 用户id: {user_id}, jwtToken: {jwt_token}")
                 log.debug(f"攻防世界: 登录信息: {res.get('data')}")
                 return user_id, jwt_token
             else:
-                log.error(f"攻防世界: 【第{flag}次尝试】登录失败，原因：{res.get('msg')}")
+                log.debug(f"攻防世界：登录返回：{res}")
+                log.error(f"攻防世界: 【第{flag}次尝试】登录失败，原因：{res.get('message', None)}")
 
         log.error("攻防世界: 登录失败！超过最大重试次数！")
         return "", ""
 
-    def get_hash_key(self) -> str:
-        """
-        获取随机验证码图片代码
-        :return: 验证码图片代码
-        """
-        url = "https://adworld.xctf.org.cn/api/images/"
-
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0"
-        }
-
-        try:
-            res = requests.get(url, headers=headers).json()
-        except Exception as err:
-            log.error(f"攻防世界: 网络链接出错：{err}")
-            return ""
-
-        if res.get("code") == 0:
-            hashkey = res.get("data").get("hashkey")
-            log.info(f"攻防世界: 成功获取hashkey: {hashkey}")
-            return hashkey
-        else:
-            log.error(f"攻防世界: 获取hash_key失败, 原因: {res.get('msg')}")
-            return ""
-
-    def classification(self, hashkey: str) -> str:
-        """
-        识别验证码
-        :param hashkey: 验证码图片代码
-        :return: 识别出的验证码
-        """
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0"
-        }
-
-        code = ""
-        while len(code) != 4:
-            url = "https://adworld.xctf.org.cn/api/captcha/images/?image_code_id="+hashkey
-
-            try:
-                res = requests.get(url, headers=headers)
-            except Exception as err:
-                log.error(f"攻防世界: 网络链接出错：{err}")
-                return ""
-
-            code = img_to_code(res.content)
-            log.debug(f"攻防世界: 识别验证码: {code}")
-
-        return code
-
-    def sign_in(self, user_id: str, jwt_token: str) -> bool:
-        """
-        攻防世界签到
-        :param user_id: 用户ID
-        :param jwt_token: 登录Token
-        :return: 是否签到成功
-        """
-        url = "https://adworld.xctf.org.cn/api/user_center/daily/checkin/create/"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
-            "Authorization": f"Bearer {jwt_token}",
-        }
-
-        start_coin = self.get_person_information(user_id, jwt_token).get("coin_number", -1)
-
-        res = requests.post(url, headers=headers).json()
-        if res.get("code") == 0:
-            final_coin = self.get_person_information(user_id, jwt_token).get("coin_number", -1)
-            log.info(f"攻防世界: 签到成功！金币余额: {start_coin}->{final_coin}")
-            return True
-        else:
-            if "已签到" in res.get("msg"):
-                log.info(f"攻防世界: 今日已签到, 当前金币余额: {start_coin}")
-                return True
-            else:
-                log.error(f"攻防世界: 签到失败！原因：{res.get('msg')}")
-                return False
-
-    def get_person_information(self, user_id: str, jwt_token: str) -> dict:
+    def get_person_information(self, jwt_token: str) -> dict:
         """
         获取个人信息
         :param user_id: 用户ID
         :param jwt_token: 登录Token
         :return: 个人信息
         """
-        url = f"https://adworld.xctf.org.cn/api/user_center/base/info/{user_id}/"
+        url = f"https://adworld.xctf.org.cn/api/ad/auth/web/current_auth/"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
-            "Authorization": f"Bearer {jwt_token}",
+            "Authorization": jwt_token,
         }
 
         res = requests.get(url, headers=headers).json()
 
-        if res.get("code") == 0:
+        if res.get("code", "") == "AD-000000":
+            ret_data = res.get("data", {})
+
+            ret_user_data = ret_data.get("user", None)
+
             log.info(f"攻防世界: 获取个人信息成功")
-            log.debug(f"攻防世界: 个人信息: {res.get('data')}")
-            return res.get("data")
+            log.debug(f"攻防世界: 个人信息: {ret_user_data}")
+            return ret_user_data
         else:
-            log.error(f"攻防世界: 获取个人信息失败！原因：{res.get('msg')}")
+            log.error(f"攻防世界: 获取个人信息失败！原因：{res.get('message')}")
             return {}
 
 
