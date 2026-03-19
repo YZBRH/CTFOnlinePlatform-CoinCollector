@@ -23,7 +23,7 @@ git clone https://github.com/YZBRH/CTFOnlinePlatform-CoinCollector.git
 cd CTFOnlinePlatform-CoinCollector
 ```
 
-​	将`config.example.py`文件重命名为`config.py`配置`config.py`文件，输入账号密码等信息
+​	将`config.example.py`文件重命名为`config.py`，并配置`config.py`文件，输入账号密码等信息
 
 ​	然后执行
 
@@ -44,7 +44,7 @@ cd CTFOnlinePlatform-CoinCollector
 ```
 
 
-​	将`config.example.py`文件重命名为`config.py`配置`config.py`文件，输入账号密码等信息
+​	将`config.example.py`文件重命名为`config.py`，并配置`config.py`文件，输入账号密码等信息
 
 ​	然后执行
 
